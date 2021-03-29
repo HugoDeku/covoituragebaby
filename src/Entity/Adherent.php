@@ -43,6 +43,11 @@ class Adherent
      */
     private $telephone;
 
+    /**
+     * @ORM\OneToOne(targetEntity=Utilisateur::class, mappedBy="Adherent", cascade={"persist", "remove"})
+     */
+    private $utilisateur;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -87,7 +92,29 @@ class Adherent
         return $this;
     }
 
-    public function getNomComplet(){
+    public function getNomComplet() : String{
         return $this->getPrenom() . " " . $this->getNom();
+    }
+
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?Utilisateur $utilisateur): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($utilisateur === null && $this->utilisateur !== null) {
+            $this->utilisateur->setAdherent(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($utilisateur !== null && $utilisateur->getAdherent() !== $this) {
+            $utilisateur->setAdherent($this);
+        }
+
+        $this->utilisateur = $utilisateur;
+
+        return $this;
     }
 }
