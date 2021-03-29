@@ -4,12 +4,23 @@ namespace App\Entity;
 
 use App\Repository\AdherentRepository;
 use Doctrine\ORM\Mapping as ORM;
+use http\Exception\InvalidArgumentException;
+use PHPUnit\TextUI\Exception;
+use Symfony\Component\Dotenv\Exception\FormatException;
 
 /**
  * @ORM\Entity(repositoryClass=AdherentRepository::class)
  */
 class Adherent
 {
+
+    public function __construct(String $prenom, String $nom, String $telephone)
+    {
+        $this->setPrenom($prenom);
+        $this->setNom($nom);
+        $this->setTelephone($telephone);
+    }
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -68,8 +79,15 @@ class Adherent
 
     public function setTelephone(string $telephone): self
     {
-        $this->telephone = $telephone;
-
+        if(strlen($telephone) == 10){
+            $this->telephone = $telephone;
+        }else{
+            throw new \InvalidArgumentException("Le numéro de téléphone doit contenir 10 digits");
+        }
         return $this;
+    }
+
+    public function getNomComplet(){
+        return $this->getPrenom() . " " . $this->getNom();
     }
 }
